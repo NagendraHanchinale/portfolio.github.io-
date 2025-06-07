@@ -325,13 +325,14 @@
 
 
       <!-- Right Content - Projects -->
-<div class="w-full lg:w-2/3 xl:w-3/4 mx-auto px-4">
-  <div class="flex flex-col md:flex-row gap-6 bg-[#1e1e1e] p-6 rounded-3xl border border-gray-700">
+<div class="w-full lg:w-full xl:w-full mx-auto px-4">
+  <div class="flex flex-col md:flex-row  bg-[#1e1e1e] p-6 rounded-3xl border border-gray-700">
     
     <!-- Left Content Area -->
-    <div class="md:w-3/4 space-y-4">
-      <div class="flex flex-col gap-1 p-4 bg-[#1e1e1e] rounded-lg">
-        <div>
+    <div class="md:w-full space-y-4">
+      <div class="flex flex-row gap-1 p-4 bg-[#1e1e1e] rounded-lg justify-between">
+        <div class="flex flex-col gap-1">
+          <div>
           <h3 class="text-xl font-semibold text-white">Course Name</h3>
           <p class="text-gray-300">Algorithmic Problem Solving</p>
         </div>
@@ -360,6 +361,20 @@
           <h3 class="text-xl font-semibold text-white">Portfolio Topic/Domain</h3>
           <p class="text-gray-300">Uber</p>
         </div>
+        </div>
+      <div class="hidden md:block ] bg-[#2c2c31] p-4 rounded-lg shadow-lg h-fit">
+      <h2 class="text-green-400 text-lg font-bold mb-2">Table of Contents</h2>
+      <table class="table-auto text-left text-gray-300 w-full">
+        <tbody>
+          <tr><td><a href="#motivation" class="hover:text-white">Motivation</a></td></tr>
+          <tr><td><a href="#objectives" class="hover:text-white">Objectives</a></td></tr>
+          <tr><td><a href="#architecture" class="hover:text-white">Architecture</a></td></tr>
+          <tr><td><a href="#functionalities" class="hover:text-white">Functionalities</a></td></tr>
+          <tr><td><a href="#references" class="hover:text-white">References</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+        
       </div>
 
       <blockquote class="italic text-green-400 border-l-4 border-green-600 pl-4">
@@ -384,7 +399,10 @@
       </ul>
 
       <h3 id="architecture" class="text-xl font-semibold text-white">Architecture</h3>
-      <img src="./images/case/Screenshot 2025-06-06 002149.png" alt="Uber Architecture Diagram" class="rounded-lg shadow-md">
+      <img src="./images/case/Screenshot 2025-06-06 002149.png" 
+     alt="Uber Architecture Diagram" 
+     class="w-[1000px] h-auto rounded-lg shadow-md mx-auto">
+
 
       <h3 id="functionalities" class="text-xl font-semibold text-white">Functionalities</h3>
       <p class="text-sm md:text-base text-gray-400 italic">
@@ -426,18 +444,7 @@
     </div>
 
     <!-- Right TOC Table -->
-    <div class="hidden md:block bg-[#2c2c31] p-4 rounded-lg shadow-lg h-fit">
-      <h2 class="text-green-400 text-lg font-bold mb-2">Table of Contents</h2>
-      <table class="table-auto text-left text-gray-300 w-full">
-        <tbody>
-          <tr><td><a href="#motivation" class="hover:text-white">Motivation</a></td></tr>
-          <tr><td><a href="#objectives" class="hover:text-white">Objectives</a></td></tr>
-          <tr><td><a href="#architecture" class="hover:text-white">Architecture</a></td></tr>
-          <tr><td><a href="#functionalities" class="hover:text-white">Functionalities</a></td></tr>
-          <tr><td><a href="#references" class="hover:text-white">References</a></td></tr>
-        </tbody>
-      </table>
-    </div>
+
   </div>
 </div>
 
