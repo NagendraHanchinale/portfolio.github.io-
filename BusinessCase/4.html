@@ -468,7 +468,137 @@ root.query(76,28,78,29,ids);               // rectangle search <br>
       </p>
     </div>
 
-<h3 class="text-xl font-semibold text-yellow-400 mt-6">2. Geohashing: Spatial Prefix Encoding</h3>
+
+   <h3 class="text-xl font-semibold text-yellow-400 mt-6">2. K-d Trees</h3>
+<p>
+  A K-d Tree (short for k-dimensional tree) is a binary space-partitioning data structure used to organize points in a k-dimensional space. In the context of geospatial data, typically 2D (latitude and longitude), it recursively divides the space into two halves by splitting along one dimension at a time. For example, at the root level it might split all points based on their x-coordinate (longitude), then at the next level split by y-coordinate (latitude), and so on, alternating dimensions as you go down the tree.
+</p>
+<p>
+  Each node in the K-d Tree represents a partition of the space and contains a point. The left subtree contains points with coordinates less than the node's splitting coordinate, and the right subtree contains points with coordinates greater than or equal to that coordinate. This recursive subdivision allows efficient organization of spatial data and supports operations such as nearest neighbor search, range search, and k-nearest neighbors.
+</p>
+<p>
+  K-d Trees are especially useful for static or mostly static datasets where the points do not frequently change, as inserting or deleting points can be complex and may require rebalancing the tree to maintain efficiency. For nearest neighbor queries, the K-d Tree enables pruning large portions of the search space, resulting in average query times of O(log n), where n is the number of points.
+</p>
+<p>
+  However, in very high-dimensional spaces (large k), K-d Trees tend to suffer from the "curse of dimensionality," where their efficiency diminishes and they can approach linear scan times. But for typical geospatial applications in 2D or 3D, they remain an effective and widely used data structure.
+</p>
+
+
+    <div class="flex flex-col justify-center items-center">
+        <img src="https://media.geeksforgeeks.org/wp-content/cdn-uploads/ktree_1.png" alt="H# Grid Image" loading="lazy" class="w-full">
+        <p class="text-gray-300 text-[0.9em]">Fig.2: K-d Tree</p>
+    </div>
+
+    <!-- code 1 -->
+    <div class="mt-4">
+      <p class="text-lg italic text-gray-400 mb-2">🔧 Code (C++)</p>
+      <div class="relative bg-[#0f0f0f] border border-gray-600 rounded-md overflow-hidden">
+        <div class="absolute top-2 right-2">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('h3-ratio-code').innerText)" class="text-xs text-purple-400 hover:text-white">Copy</button>
+        </div>
+        <pre class="text-sm p-4 overflow-auto" id="h3-ratio-code"><code class="language-cpp">const int k = 2;
+
+struct Node
+{
+    int point[k];
+    Node *left, *right;
+};
+
+struct Node* newNode(int arr[])
+{
+    struct Node* temp = new Node;
+    for (int i=0; i<k; i++)
+       temp->point[i] = arr[i];
+    temp->left = temp->right = NULL;
+    return temp;
+}
+
+Node *insertRec(Node *root, int point[], unsigned depth)
+{
+    if (root == NULL)
+       return newNode(point);
+
+    unsigned cd = depth % k;
+
+    if (point[cd] < (root->point[cd]))
+        root->left  = insertRec(root->left, point, depth + 1);
+    else
+        root->right = insertRec(root->right, point, depth + 1);
+
+    return root;
+}
+
+Node* insert(Node *root, int point[])
+{
+    return insertRec(root, point, 0);
+}
+
+bool arePointsSame(int point1[], int point2[])
+{
+    for (int i = 0; i < k; ++i)
+        if (point1[i] != point2[i])
+            return false;
+
+    return true;
+}
+
+bool searchRec(Node* root, int point[], unsigned depth)
+{
+    if (root == NULL)
+        return false;
+    if (arePointsSame(root->point, point))
+        return true;
+
+    unsigned cd = depth % k;
+
+    if (point[cd] < root->point[cd])
+        return searchRec(root->left, point, depth + 1);
+
+    return searchRec(root->right, point, depth + 1);
+}
+
+bool search(Node* root, int point[])
+{
+    return searchRec(root, point, 0);
+}</code></pre>
+      </div>
+    </div>
+<div class="mt-4">
+  <div class="relative bg-[#2a2a2a] border border-gray-600 rounded-md overflow-hidden">
+    <pre class="text-sm p-4 overflow-auto" id="h3-ratio-code">
+Insertion and Search in KD Tree - Efficiency Analysis
+
+Let n be the number of points stored in the KD Tree.
+Let k be the number of dimensions (here k=2).
+
+1. Insertion (insert):
+   - Each level of the tree splits the space along one dimension.
+   - On average, the tree height is O(log n).
+   - Each insertion requires O(log n) comparisons.
+   - Worst-case time complexity is O(n), occurring if the tree becomes unbalanced.
+
+2. Search (search):
+   - Searches traverse the tree based on dimension comparisons.
+   - Average-case time complexity is O(log n).
+   - Worst-case time complexity is O(n) if the tree is skewed.
+   - Performance depends on the balance of the tree and the distribution of points.
+
+Space Complexity:
+   - Each node stores one k-dimensional point.
+   - Overall space complexity is O(n).
+
+Summary:
+   - KD Trees offer efficient multidimensional search when balanced.
+   - Insert and search operations are efficient for low to moderate dimensions.</pre>
+  </div>
+</div>
+
+
+
+
+
+
+<h3 class="text-xl font-semibold text-yellow-400 mt-6">3. Geohashing: Spatial Prefix Encoding</h3>
 
 <p class="text-gray-300">
   Geohashing transforms geographic coordinates (latitude, longitude) into a compact base32-encoded string, with each character increasing spatial resolution. Nearby coordinates share a common prefix, allowing for fast prefix-based queries and clustering.
@@ -492,7 +622,7 @@ root.query(76,28,78,29,ids);               // rectangle search <br>
 
     <div class="flex flex-col justify-center items-center">
         <img src="../images/case/f4_fig2.png" alt="H# Grid Image" loading="lazy" class="w-full">
-        <p class="text-gray-300 text-[0.9em]" >Fig 2. Working of Geohashing</p>
+        <p class="text-gray-300 text-[0.9em]" >Fig 3. Working of Geohashing</p>
     </div>
 
     <div class="mt-4">
@@ -552,7 +682,7 @@ Space Complexity:
 </div>
 </div>
 
-<h3 class="text-xl font-semibold text-white-400 ">2.1 Neighbor Query Strategy</h3>
+<h3 class="text-xl font-semibold text-white-400 ">3.1 Neighbor Query Strategy</h3>
 <p>
   To fetch drivers within a certain radius, we compute neighboring geohashes and check each region’s list, verifying true distance via Haversine formula.
 </p>
@@ -675,11 +805,14 @@ Space Complexity:
 
   <ul class="list-disc list-inside ml-4 text-gray-300 mt-3">
     <li>Quad Trees are great for spatial pruning in smaller, moderately dynamic datasets.</li>
+    <li>KD Trees excel in multidimensional spatial searches with balanced data, offering efficient query performance for moderate-sized datasets but can degrade if data distribution leads to unbalanced trees.</li>
     <li>Geohashing offers compactness and key-based retrieval but needs neighbor padding.</li>
     <li>H3, with its uniform hexagon model and hierarchical index, delivers global scalability and locality-preserving accuracy at Uber-scale workloads.</li>
   </ul>
 
-<p class="mt-3">As ride-hailing systems grow across geographies and real-time demands spike, hexagonal indexing systems like H3 are proving to be the gold standard in geospatial computing for mobility platforms.</p>
+<p class="mt-3">
+  As ride-hailing systems grow across geographies and real-time demands spike, hexagonal indexing systems like H3 are proving to be the gold standard in geospatial computing for mobility platforms.
+</p>
 
 </div>
 
