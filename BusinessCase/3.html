@@ -431,12 +431,16 @@ Overall Time Complexity:
        <div class="absolute top-2 right-2">
          <button onclick="navigator.clipboard.writeText(document.getElementById('h3-ratio-code').innerText)" class="text-xs text-purple-400 hover:text-white">Copy</button>
        </div>
-       <pre class="text-sm p-4 overflow-auto scrollbar-hide" id="h3-ratio-code">
-struct Node {
+       <pre class="text-sm p-4 overflow-auto scrollbar-hide" id="h3-ratio-code">struct Node {
     int x, y;
     double f, g, h;
     Node* parent;
-    bool operator>(const Node& other) const { return f > other.f; }
+};
+
+struct Compare {
+    bool operator()(const Node* a, const Node* b) const {
+        return a->f > b->f;
+    }
 };
 
 double heuristic(int x1, int y1, int x2, int y2) {
@@ -446,45 +450,47 @@ double heuristic(int x1, int y1, int x2, int y2) {
 vector<pair<int, int>> astar(vector<vector<int>>& grid,
                              pair<int, int> start, pair<int, int> goal) {
     int rows = grid.size(), cols = grid[0].size();
-    priority_queue<Node, vector<Node>, greater<>> open;
-    unordered_map<int, Node*> visited;
-
     auto hash = [&](int x, int y) { return x * cols + y; };
+
+    priority_queue<Node*, vector<Node*>, Compare> open;
+    unordered_map<int, Node*> visited;
 
     Node* startNode = new Node{start.first, start.second, 0, 0,
                                heuristic(start.first, start.second, goal.first, goal.second), nullptr};
-    open.push(*startNode);
+    startNode->f = startNode->g + startNode->h;
+    open.push(startNode);
     visited[hash(start.first, start.second)] = startNode;
 
     vector<pair<int, int>> directions = {{1,0},{-1,0},{0,1},{0,-1}};
 
     while (!open.empty()) {
-        Node curr = open.top(); open.pop();
-        if (curr.x == goal.first && curr.y == goal.second) {
+        Node* curr = open.top(); open.pop();
+
+        if (curr->x == goal.first && curr->y == goal.second) {
             vector<pair<int, int>> path;
-            for (Node* n = &curr; n; n = n->parent)
+            for (Node* n = curr; n; n = n->parent)
                 path.push_back({n->x, n->y});
             reverse(path.begin(), path.end());
             return path;
         }
 
         for (auto [dx, dy] : directions) {
-            int nx = curr.x + dx, ny = curr.y + dy;
+            int nx = curr->x + dx, ny = curr->y + dy;
             if (nx >= 0 && ny >= 0 && nx < rows && ny < cols && grid[nx][ny] == 0) {
-                double g_new = curr.g + 1.0;
+                double g_new = curr->g + 1.0;
                 double h_new = heuristic(nx, ny, goal.first, goal.second);
                 double f_new = g_new + h_new;
 
                 int hkey = hash(nx, ny);
                 if (!visited.count(hkey) || g_new < visited[hkey]->g) {
-                    Node* neighbor = new Node{nx, ny, f_new, g_new, h_new, visited[hash(curr.x, curr.y)]};
-                    open.push(*neighbor);
+                    Node* neighbor = new Node{nx, ny, f_new, g_new, h_new, curr};
+                    open.push(neighbor);
                     visited[hkey] = neighbor;
                 }
             }
         }
     }
-    return {}; // No path
+    return {}; // No path found
 }<code class="language-cpp"></code></pre>
      </div>
    </div>
